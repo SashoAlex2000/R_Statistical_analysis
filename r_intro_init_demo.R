@@ -150,6 +150,7 @@ starwars %>%
            sex %in% c("male", "female")) %>% 
   View()
 
+# reload the data
 data(starwars)
 
 # Re-code data to different values
@@ -174,4 +175,110 @@ starwars %>%
 starwars %>% 
   select(name, mass, sex) %>% 
   View()
+
+# missing data
+mean(starwars$height) # returns NA
+
+mean(starwars$height, na.rm = TRUE) # remote the NA values
+
+#duplicates
+d_names <- c("Ivan", "Petar", "Georgi", "Ivan")
+d_ages <- c(22,23,24,22)
+
+d_df <- data.frame(d_names, d_ages)
+d_df
+
+d_df %>% 
+  distinct()
+
+# aleternatively
+distinct(d_df)
+
+# Data manipulation
+
+starwars %>% 
+  mutate(height_m = height/100) %>% 
+  mutate(tallness_qual = if_else(height_m < 1,
+                                 "short",
+                                 "tall")) %>% 
+  select(name, height, height_m, tallness_qual) 
+  
+
+# Library
+install.packages("gapminder")
+library(gapminder)
+View(gapminder)
+
+# the dataset can be passed in as the first argument
+gm_data <- select(gapminder, country, year, lifeExp)
+
+View(gm_data)
+
+wide_gm_data <- gm_data %>% 
+  pivot_wider(
+    names_from = year,
+    values_from = lifeExp
+  )
+
+View(wide_gm_data)
+
+# go back
+longa_gm_data <- wide_gm_data %>% 
+  pivot_longer(2:13,
+               names_to = "year",
+               values_to = "lifeExp")
+
+View(longa_gm_data)
+
+# Describe
+View(msleep)
+
+min(msleep$awake)
+max(msleep$awake)
+range(msleep$awake)
+IQR(msleep$awake)
+
+mean(msleep$awake)
+median(msleep$awake)
+mode(msleep$awake) # numberic ?
+
+var(msleep$awake)
+
+summary(msleep$awake)
+
+msleep %>% 
+  select(awake, sleep_rem, sleep_rem, sleep_total) %>% 
+  summary()
+
+
+# group by 'vore' (type of eating), and create a summary table
+msleep %>% 
+  drop_na(vore) %>% 
+  group_by(vore) %>% 
+  summarise(Lower = min(sleep_total),
+            Average = mean(sleep_total),
+            Upper = max(sleep_total), 
+            Difference = 
+              max(sleep_total) - min(sleep_total)) %>% 
+  arrange(Average) %>% 
+  View()
+
+
+# tables
+table(msleep$vore)
+
+msleep %>% 
+  select(vore, order) %>% 
+  filter(order %in% c("Rodentia", "Primates")) %>% 
+  table()
+
+# Data visualization
+plot(pressure)
+
+
+
+
+
+
+
 
