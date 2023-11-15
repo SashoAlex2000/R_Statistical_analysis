@@ -275,10 +275,92 @@ msleep %>%
 # Data visualization
 plot(pressure)
 
+View(starwars)
+
+# ggplot is included in tidyverse
+# mapping - define aesthetics
+# plus instead of the pipe operator
+ggplot(data=starwars, 
+       mapping=aes(x=sex)) + geom_bar()
+  
+
+# do the things before plotting
+# when using the piping operator, there is no need to explicitly pass in the 
+# first argument to ggplot for example, assumed by default
+starwars %>% 
+  drop_na %>%
+  ggplot(mapping = aes(x=height)) + 
+  geom_histogram()
 
 
+# Box pots ???
+starwars %>% 
+  drop_na(height) %>% 
+  ggplot(aes(height))+
+  geom_boxplot(fill="steelblue")+
+  theme_bw()+
+  labs(title="Boxplot; height", 
+       x = "Height of the characters")
+
+# density plot; alpha is the density of color in chart
+starwars %>% 
+  drop_na(height) %>% 
+  filter(sex %in% c("male", "female")) %>% 
+  ggplot(mapping = aes(x=height,
+                       color=sex,
+                       fill=sex))+
+  geom_density(alpha=0.35)+
+  theme_bw()
 
 
+# scatter plot
+# X axis -> height
+# Y axis -> mass
+# cannot remove the NA and None values :?
+starwars %>% 
+  filter(mass < 200) %>% 
+  drop_na(mass) %>% 
+  drop_na(height) %>% 
+  ggplot(aes(height,mass,color=sex))+
+  geom_point(size=5, alpha=0.5)+
+  theme_dark()+
+  labs(title="Height and mass by sex")
 
 
+# Smoothed model
+# geom smooth draws a small linear model
+# another layer -> differnt boxes by sex
+starwars %>% 
+  filter(mass < 200) %>% 
+  ggplot(aes(height,mass,color=sex))+
+  geom_point(size=5, alpha=0.5)+
+  geom_smooth()+
+  facet_wrap(~sex)+
+  theme_minimal()+
+  labs(title="Height and mass by sex")
+
+
+# --------------------
+# Analyse - Hypothesis testing, T-test, ANOVA, etc.
+
+library(gapminder)
+View(gapminder)
+
+# Test the idea of difference in life expectancy;
+# Null hypothesis -> no difference
+# IF true -> how likely would it be to get a sample with this magnitude of difference - p value
+
+# lifeExp as a function of continent
+# data=. due to the pipe operator
+# other args are bythe same by default
+# p-value < 2.2e-16 -> we can reject the null hypothesis
+# extremely small chance of getting such a sample IF the null hypothesis was true
+gapminder %>% 
+  filter(continent %in% c("Africa", "Europe")) %>% 
+  t.test(lifeExp ~ continent, data=.,
+         alternative = "two.sided",
+         paired=FALSE)
+
+# alternative -> could be one.sided - more or less life exp
+# pair true - pairs data between the datasets ?
 
