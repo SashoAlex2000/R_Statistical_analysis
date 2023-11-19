@@ -364,3 +364,73 @@ gapminder %>%
 # alternative -> could be one.sided - more or less life exp
 # pair true - pairs data between the datasets ?
 
+# ANOVA - analysis of variance
+gapminder %>% 
+  filter(year == 2007) %>% 
+  filter(continent %in% c('Americas', 'Europe', 'Asia')) %>% 
+  aov(lifeExp ~ continent, data = .) %>% 
+  summary()
+
+# Small p value -> allnull hypothesis is that the three continents have the same 
+# lifeExp, really small probability for this to have happened
+
+
+# Look at the difference by pairs
+gapminder %>% 
+  filter(year == 2007) %>% 
+  filter(continent %in% c('Americas', 'Europe', 'Asia')) %>% 
+  aov(lifeExp ~ continent, data = .) %>% 
+  TukeyHSD() %>% 
+  plot()
+
+# The difference in Asia and the Americas is not statistically significant
+# the 95% interval includes 0
+
+# chi squared - categorical data
+chi_plot
+
+head(iris)
+
+# cut the flowers int groups based on Sepal length
+flowers <- iris %>% 
+  mutate(Size = cut(Sepal.Length,
+                    breaks = 3,
+                    labels = c('small', 'medium', 'large'))) %>% 
+  select(Species, Size)
+
+flowers %>% 
+  select(Size) %>% 
+  table() %>% 
+  View()
+
+flowers %>% 
+  select(Species, Size) %>% 
+  table() %>% 
+  View()
+
+# is the proportion the same: null hypothesis ->
+# chi squared goodness of fit
+flowers %>% 
+  select(Size) %>% 
+  table() %>% 
+  chisq.test()
+# extremely small p value -> extremely unlikely; reject null
+
+
+# look the typs of species inside of the group, are the dependent
+flowers %>% 
+  table() %>% 
+  chisq.test() # again small p value
+
+
+# linear model
+head(cars)
+# x variable, speed - independent variable
+# y - distance - dependent 
+# p value the slope is 0, no relationship
+# R^2 -> how much of Y is influenced by X -> 65%
+
+cars %>% 
+  lm(dist ~ speed, data = .) %>% 
+  summary()
+
